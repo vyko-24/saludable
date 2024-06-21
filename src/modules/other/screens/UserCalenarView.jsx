@@ -115,14 +115,6 @@ export default function UserCalenarView(props) {
     }
   }, [userid]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (userid) {
-        getTransactions(userid);
-      }
-    }, [userid])
-  );
-
   const [transactionsForDate, setTransactionsForDate] = useState([]);
 
   const showTransactionsForDate = (date) => {

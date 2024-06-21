@@ -213,7 +213,6 @@ export default function TransInfo(props) {
     },
     validationSchema: yup.object({
       nombre: yup.string().required('El nombre es requerido'),
-      descripcion: yup.string().required('La descripción es requerida'),
       fecha: yup.date().required('La fecha es requerida'),
       categoria: yup.string().required('La categoría es requerida'),
       origen: yup.string().required('La cuenta de origen es requerida'),

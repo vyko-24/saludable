@@ -64,13 +64,6 @@ export default function ChartView(props) {
         }
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            getCategories();
-            getTransactions();
-        }, [])
-    );
-
     useEffect(() => {
         getTransactions();
         getCategories();
@@ -80,7 +73,7 @@ export default function ChartView(props) {
         if (transactions.length && categories.length) {
             processDataForCharts();
         }
-    }, []);
+    }, [transactions, categories]);
 
     const processDataForCharts = () => {
         setVisible(true);

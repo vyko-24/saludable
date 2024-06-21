@@ -125,31 +125,36 @@ export default function CreateLoan(props) {
         }
       };
 
-    const changeAvatar = async () => {
+      const changeAvatar = async () => {
         const resultPermission = await MediaLibrary.requestPermissionsAsync();
         if (resultPermission.status !== 'denied') {
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [3, 5],
-                quality: 1,
-                base64: true
-            });
-            if (!result.canceled) {
-                setVisible(true);
-                try {
-                    setNewPhotoBase64('data:image/jpeg;base64,' + result.assets[0].base64);
-                    formik.setFieldValue('comprobante', newPhotoBase64);
-                } catch (error) {
-                    console.log(error);
-                } finally {
-                    setVisible(false);
-                }
+          let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [3, 5],
+            quality: 1,
+            base64: true
+          });
+          if (!result.canceled) {
+            setVisible(true);
+            try {
+              const base64Image = 'data:image/jpeg;base64,' + result.assets[0].base64;
+            setNewPhotoBase64(base64Image);
+            formik.setFieldValue('comprobante', base64Image);
+            } catch (error) {
+              console.log(error);
+              setMessage(true);
+              setTimeout(() => {
+                setMessage(false);
+              }, 2000);
+            } finally {
+              setVisible(false);
             }
+          }
         } else {
-            alert('Es necesario aceptar los permisos de la galería');
+          alert('Es necesario aceptar los permisos de la galería');
         }
-    };
+      };
 
 
     const changeDate = (dateString) => {
@@ -173,10 +178,12 @@ export default function CreateLoan(props) {
             interes: null,
             periodo: null,
             unico: true,
-            comprobante: '',
+            comprobante: newPhotoBase64,
         },
         validationSchema: yup.object({
-            monto: yup.number().required('El monto es requerido'),
+          nombre: yup.string().required('El nombre es requerido'),
+          monto: yup.number().required('El monto es requerido'),
+          comprobante: yup.string().required('El comprobante es requerido'),
         }),
         onSubmit: async (values) => {
             setVisible(true);

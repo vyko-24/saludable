@@ -91,12 +91,6 @@ export default function CalendarView(props) {
     getTransactions();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      getTransactions();
-    }, [])
-  );
-
   const [transactionsForDate, setTransactionsForDate] = useState([]);
 
   const showTransactionsForDate = (date) => {

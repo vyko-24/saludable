@@ -104,15 +104,6 @@ export default function UserChartView(props) {
     }
   }, [userid]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (userid) {
-        getCategories(userid);
-        getTransactions(userid);
-      }
-    }, [userid])
-  );
-
   useEffect(() => {
       if (transactions.length && categories.length && !error400) {
           processDataForCharts();

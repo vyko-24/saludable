@@ -26,11 +26,13 @@ export default function CreateTrans(props) {
   const [showDestinoField, setShowDestinoField] = useState(false);
   const [newPhotoBase64, setNewPhotoBase64] = useState(null);
   const [userid, setUserid] = useState(null);
+  const [usernames, setUsernames] = useState([]);
 
   const getRol = async () => {
     const rolesString = await AsyncStorage.getItem("user");
     const rolesArray = JSON.parse(rolesString);
     setUserid(rolesArray.user.id);
+    setUsernames(rolesArray.user.username);
   }
   
   useEffect(() => {
@@ -126,8 +128,9 @@ export default function CreateTrans(props) {
       if (!result.canceled) {
         setVisible(true);
         try {
-          setNewPhotoBase64('data:image/jpeg;base64,' + result.assets[0].base64);
-          formik.setFieldValue('comprobante', newPhotoBase64);
+          const base64Image = 'data:image/jpeg;base64,' + result.assets[0].base64;
+        setNewPhotoBase64(base64Image);
+        formik.setFieldValue('comprobante', base64Image);
         } catch (error) {
           console.log(error);
           setMessage(true);
@@ -181,6 +184,10 @@ export default function CreateTrans(props) {
     }, [userid])
   );
 
+  useEffect(()=> {
+      formik.setFieldValue('comprobante', newPhotoBase64);
+  }, [newPhotoBase64])
+
   const formik = useFormik({
     initialValues: {
       nombre: '',
@@ -191,10 +198,15 @@ export default function CreateTrans(props) {
       origen: '',
       destino: 'a',
       monto: '',
-      comprobante: '',
-      usuario: userid ? userid : '1',
+      comprobante: newPhotoBase64,
+      usuario: {id: userid, username: usernames},
       prestamo: params.prestamo ? params.prestamo : null,
     },
+    validationSchema: yup.object({
+      nombre: yup.string().required('El nombre es requerido'),
+      monto: yup.number().required('El monto es requerido'),
+      comprobante: yup.string().required('El comprobante es requerido'),
+    }),
     onSubmit: async (values) => {
       try {
         setVisible(true);
@@ -204,16 +216,16 @@ export default function CreateTrans(props) {
           tipo: { id: values.tipo },
           categoria: { id: values.categoria },
           origen: { id: values.origen },
-          destino: values.tipo === '3' ? { id: values.destino } : undefined, // Manejo condicional de destino
-          usuario: { id: values.usuario },
+          destino: values.tipo === '3' ? { id: values.destino } : undefined,
+          usuario: {id: userid, username: usernames},
           monto: values.monto,
-          comprobante: newPhotoBase64,  // Utiliza directamente newPhotoBase64
+          comprobante: newPhotoBase64,
         };
 
         const response = await AxiosClient({
           url: '/transaccion/',
           method: 'POST',
-          data: payload  // Envía el payload correcto
+          data: payload  
         });
 
         if (response.status === 'OK') {
@@ -368,7 +380,7 @@ export default function CreateTrans(props) {
           buttonStyle={styles.btnStyle}
           titleStyle={{ color: '#fff', marginBottom: 8 }}
           onPress={formik.handleSubmit}
-          disabled={formik.isSubmitting}
+          disabled={formik.isSubmitting || !formik.isValid}
         />
       </View>
     </ScrollView>

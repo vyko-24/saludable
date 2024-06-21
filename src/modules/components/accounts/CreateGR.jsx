@@ -56,7 +56,7 @@ export default function CreateGR(props) {
 
   const formik = useFormik({
     initialValues: {
-      nombre: '',
+      nombre: null,
       supervisor: []
     },
     validationSchema: yup.object({

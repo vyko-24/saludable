@@ -16,12 +16,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Test from '../Test';
 import { Alert, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import AxiosClient from '../../../config/http-gateway/http-client';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: false,
+        shouldPlaySound: true,
         shouldSetBadge: false,
     }),
 });
@@ -29,39 +31,39 @@ Notifications.setNotificationHandler({
 const Drawer = createDrawerNavigator();
 
 export default function NavigationAdmin() {
-    console.log("NavigationAdmin");
-        useEffect(() => {
-            registerForPushNotificationsAsync().then(token => {
-                if (token) {
-                    sendTokenToBackend(token);
-                }
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => {
+            if (token) {
+                sendTokenToBackend(token);
+            }
+        });
+    }, []);
+
+    const sendTokenToBackend = async (token) => {
+        try {
+            const response = await AxiosClient({
+                url: "/deviceToken/device-token",
+                method: "POST",
+                data: { token }
             });
-        }, []);
-    
-        const sendTokenToBackend = async (token) => {
-            try {
-                const response = await AxiosClient({
-                    url: "/deviceToken",
-                    method: "POST",
-                    data: { token }
-                });
-                console.log('Token enviado al backend:', response.data);
-            } catch (error) {
-                console.error('Error enviando token al backend:', error);
-            }
-        };
-    
-        const registerForPushNotificationsAsync = async () => {
-            let token;
-            if (Platform.OS === 'android') {
-                await Notifications.setNotificationChannelAsync('default', {
-                    name: 'default',
-                    importance: Notifications.AndroidImportance.MAX,
-                    vibrationPattern: [0, 250, 250, 250],
-                    lightColor: '#FF231F7C',
-                });
-            }
-    
+            console.log('Token enviado al backend:', response.data);
+        } catch (error) {
+            console.error('Error enviando token al backend:', error);
+        }
+    };
+
+    const registerForPushNotificationsAsync = async () => {
+        let token;
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
+        }
+
+        if (Device.isDevice) {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;
             if (existingStatus !== 'granted') {
@@ -69,14 +71,19 @@ export default function NavigationAdmin() {
                 finalStatus = status;
             }
             if (finalStatus !== 'granted') {
-                Alert.alert('Failed to get push token for push notification!');
+                alert('Failed to get push token for push notification!');
                 return;
             }
-            token = (await Notifications.getExpoPushTokenAsync()).data;
+            token = (await Notifications.getExpoPushTokenAsync({
+                projectId: Constants.expoConfig.extra.eas.projectId,
+            })).data;
             console.log(token);
-    
-            return token;
-        };
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        return token;
+    };
 
     return (
         <NavigationContainer>
