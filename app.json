@@ -6,7 +6,9 @@
         {
           "icon": "./local/assets/notification-icon.png",
           "color": "#ffffff",
-          "sounds": ["./local/assets/notification-sound.wav"]
+          "sounds": [
+            "./local/assets/notification-sound.wav"
+          ]
         }
       ]
     ],
@@ -45,6 +47,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9a47a2d9-4796-47cf-814d-7552abf1ff68"
+      }
     }
   }
 }
