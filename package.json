@@ -21,9 +21,12 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "axios": "^1.7.2",
     "expo": "~51.0.14",
+    "expo-device": "~6.0.2",
     "expo-image-picker": "~15.0.5",
     "expo-media-library": "~16.0.3",
+    "expo-notifications": "~0.28.9",
     "expo-status-bar": "~1.12.1",
+    "expo-updates": "~0.25.17",
     "formik": "^2.4.6",
     "react": "18.2.0",
     "react-native": "0.74.2",
@@ -32,14 +35,12 @@
     "react-native-checkbox-tree": "^2.1.0",
     "react-native-date-picker": "^5.0.4",
     "react-native-datepicker": "^1.7.2",
+    "react-native-device-info": "^11.1.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-reanimated": "~3.10.1",
     "react-native-svg": "15.2.0",
     "react-native-swipeable": "^0.6.0",
-    "yup": "^1.4.0",
-    "expo-notifications": "~0.28.9",
-    "expo-updates": "~0.25.17",
-    "expo-device": "~6.0.2"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

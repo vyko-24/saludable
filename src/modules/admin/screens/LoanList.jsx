@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Vibration } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import { useFocusEffect } from '@react-navigation/native';
 import Loading from '../../../kernel/Loading';
-import { Input, ListItem, Button, CheckBox, FAB, Icon, Dialog, SpeedDial, Divider, LinearProgress } from '@rneui/base';
+import { Input, ListItem, Button, CheckBox, FAB, Tab, TabView, SpeedDial, Divider, LinearProgress } from '@rneui/base';
 import AxiosClient from '../../../config/http-gateway/http-client';
 import { ScrollView } from 'react-native-gesture-handler';
 import Message from '../../../kernel/Message';
@@ -112,78 +112,222 @@ export default function LoanList(props) {
         getLoans();
     }, [])
 
-    return (
+    const [index, setIndex] = React.useState(0);
+    return (<>
+
+        <Tab
+            value={index}
+            onChange={(e) => setIndex(e)}
+            indicatorStyle={{
+                backgroundColor: '#86939E',
+                height: 3,
+            }}
+            containerStyle={{ backgroundColor: "#4C4A60" }}
+            scrollable={false}
+        >
+            <Tab.Item
+                title="General"
+                titleStyle={{ fontSize: 10, color: 'white' }}
+            />
+            <Tab.Item
+                title="Prestamos Solicitados"
+                titleStyle={{ fontSize: 10, color: 'white' }}
+            />
+            <Tab.Item
+                title="Prestamos Dados"
+                titleStyle={{ fontSize: 10, color: 'white' }}
+            />
+        </Tab>
         <View style={styles.container}>
-            <Input
-                placeholder='Buscar...'
-                leftIcon={{ type: 'material-community', name: 'magnify', color: '#fff' }}
-                style={{ color: '#fff' }}
-                onChangeText={(text) => setFilterText(text)}
-                value={filterText} />
             <Loading
                 visible={visible}
                 title='Cargando...'
             />
             <Message visible={message} title='Error. Inténtelo más tarde' />
             <View style={{ flex: 1 }}>
-                <ScrollView>
-                    {loans.filter((loan) => loan.descripcion.includes(filterText)).map((loan, index) => {
-                        const progress = ((loan.reembolzado * 100) / loan.total) / 100;
-                        const colors = loan.tipoPrestamo ? ('#3BCE5E') : ('#EF5350');
-                        return (
-                            <ListItem.Swipeable
-                                key={index}
-                                bottomDivider
-                                containerStyle={{ backgroundColor: '#3A384A' }}
-                                onPress={() => { setSelectedLoan(loan); getPays(loan.id) }}
-                                leftContent={(reset) => (
-                                    <Button
-                                        title="Info"
-                                        onPress={() => {
-                                                navigation.navigate('LoanInfo', { loan, edit: false, admin: true });
-                                            reset();
-                                        }}
-                                        icon={{ name: 'info', color: 'white' }}
-                                        buttonStyle={{ minHeight: '100%' }}
-                                    />
-                                )}
-                                rightContent={(reset) => (
-                                    <Button
-                                        onPress={() => {
-                                                navigation.navigate('LoanInfo', { loan, edit: true, admin: true });
-                                            reset();
-                                        }}
-                                        icon={{ name: 'edit', color: 'white' }}
-                                        buttonStyle={{ minHeight: '100%', backgroundColor: 'orange' }}
-                                    />
-                                )}
-                            >
-                                <ListItem.Content>
-                                    <View style={{ flex: 1 }}>
-                                        <View style={styles.titleView}>
-                                            <View style={{ flex: 1 }}><Text style={{ color: 'white', size: 20 }}>{loan.descripcion}</Text></View>
-                                            <View style={{ flex: 1 }}><Text style={{ color: colors }}>$ {formatMoney(loan.total)}</Text></View>
-                                        </View>
-                                        <View style={styles.subtitleView}>
-                                            <View style={{ flex: 1 }}><Text style={styles.ratingText}>{loan.transaccion[0].origen.nombre}</Text></View>
+                <TabView value={index} onChange={setIndex} animationType="spring" disableSwipe={true}>
+                    <TabView.Item style={{ width: '100%' }}>
+                        <ScrollView>
+                            {loans.filter((loan) => loan.descripcion.includes(filterText)).map((loan, index) => {
+                                const progress = ((loan.reembolzado * 100) / loan.total) / 100;
+                                const colors = loan.tipoPrestamo ? ('#3BCE5E') : ('#EF5350');
+                                return (
+                                    <ListItem.Swipeable
+                                        key={index}
+                                        bottomDivider
+                                        containerStyle={{ backgroundColor: '#3A384A' }}
+                                        onPress={() => { setSelectedLoan(loan); getPays(loan.id) }}
+                                        leftContent={(reset) => (
+                                            <Button
+                                                title="Info"
+                                                onPress={() => {
+                                                    navigation.navigate('LoanInfo', { loan, edit: false, admin: true });
+                                                    reset();
+                                                }}
+                                                icon={{ name: 'info', color: 'white' }}
+                                                buttonStyle={{ minHeight: '100%' }}
+                                            />
+                                        )}
+                                        rightContent={(reset) => (
+                                            <Button
+                                                onPress={() => {
+                                                    navigation.navigate('LoanInfo', { loan, edit: true, admin: true });
+                                                    reset();
+                                                }}
+                                                icon={{ name: 'edit', color: 'white' }}
+                                                buttonStyle={{ minHeight: '100%', backgroundColor: 'orange' }}
+                                            />
+                                        )}
+                                    >
+                                        <ListItem.Content>
                                             <View style={{ flex: 1 }}>
-                                                <LinearProgress
-                                                    animation={false}
-                                                    style={{ marginVertical: 10, width: '50%' }}
-                                                    value={progress}
-                                                    variant="determinate"
-                                                    color='#0D6EFD'
-                                                />
+                                                <View style={styles.titleView}>
+                                                    <View style={{ flex: 1 }}><Text style={{ color: 'white', size: 20 }}>{loan.descripcion}</Text></View>
+                                                    <View style={{ flex: 1 }}><Text style={{ color: colors }}>$ {formatMoney(loan.total)}</Text></View>
+                                                </View>
+                                                <View style={styles.subtitleView}>
+                                                    <View style={{ flex: 1 }}><Text style={styles.ratingText}>{loan.transaccion[0].origen.nombre}</Text></View>
+                                                    <View style={{ flex: 1 }}>
+                                                        <LinearProgress
+                                                            animation={false}
+                                                            style={{ marginVertical: 10, width: '50%' }}
+                                                            value={progress}
+                                                            variant="determinate"
+                                                            color='#0D6EFD'
+                                                        />
+                                                    </View>
+                                                </View>
                                             </View>
-                                        </View>
-                                    </View>
-                                </ListItem.Content>
-                            </ListItem.Swipeable>
-                        )
-                    })}
-                </ScrollView>
-                <View style={{ height: 100 }}>
-                <FAB
+                                        </ListItem.Content>
+                                    </ListItem.Swipeable>
+                                )
+                            })}
+                        </ScrollView>
+                    </TabView.Item>
+                    <TabView.Item style={{ width: '100%' }}>
+                    <ScrollView>
+                            {loans.filter((loan) => {
+                            return loan.tipoPrestamo === true && loan.descripcion.includes(filterText)
+                        }).map((loan, index) => {
+                                const progress = ((loan.reembolzado * 100) / loan.total) / 100;
+                                const colors = loan.tipoPrestamo ? ('#3BCE5E') : ('#EF5350');
+                                return (
+                                    <ListItem.Swipeable
+                                        key={index}
+                                        bottomDivider
+                                        containerStyle={{ backgroundColor: '#3A384A' }}
+                                        onPress={() => { setSelectedLoan(loan); getPays(loan.id) }}
+                                        leftContent={(reset) => (
+                                            <Button
+                                                title="Info"
+                                                onPress={() => {
+                                                    navigation.navigate('LoanInfo', { loan, edit: false, admin: true });
+                                                    reset();
+                                                }}
+                                                icon={{ name: 'info', color: 'white' }}
+                                                buttonStyle={{ minHeight: '100%' }}
+                                            />
+                                        )}
+                                        rightContent={(reset) => (
+                                            <Button
+                                                onPress={() => {
+                                                    navigation.navigate('LoanInfo', { loan, edit: true, admin: true });
+                                                    reset();
+                                                }}
+                                                icon={{ name: 'edit', color: 'white' }}
+                                                buttonStyle={{ minHeight: '100%', backgroundColor: 'orange' }}
+                                            />
+                                        )}
+                                    >
+                                        <ListItem.Content>
+                                            <View style={{ flex: 1 }}>
+                                                <View style={styles.titleView}>
+                                                    <View style={{ flex: 1 }}><Text style={{ color: 'white', size: 20 }}>{loan.descripcion}</Text></View>
+                                                    <View style={{ flex: 1 }}><Text style={{ color: colors }}>$ {formatMoney(loan.total)}</Text></View>
+                                                </View>
+                                                <View style={styles.subtitleView}>
+                                                    <View style={{ flex: 1 }}><Text style={styles.ratingText}>{loan.transaccion[0].origen.nombre}</Text></View>
+                                                    <View style={{ flex: 1 }}>
+                                                        <LinearProgress
+                                                            animation={false}
+                                                            style={{ marginVertical: 10, width: '50%' }}
+                                                            value={progress}
+                                                            variant="determinate"
+                                                            color='#0D6EFD'
+                                                        />
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </ListItem.Content>
+                                    </ListItem.Swipeable>
+                                )
+                            })}
+                        </ScrollView>
+                    </TabView.Item>
+                    <TabView.Item style={{ width: '100%' }}>
+                    <ScrollView>
+                            {loans.filter((loan) => {
+                            return loan.tipoPrestamo === false && loan.descripcion.includes(filterText)
+                        }).map((loan, index) => {
+                                const progress = ((loan.reembolzado * 100) / loan.total) / 100;
+                                const colors = loan.tipoPrestamo ? ('#3BCE5E') : ('#EF5350');
+                                return (
+                                    <ListItem.Swipeable
+                                        key={index}
+                                        bottomDivider
+                                        containerStyle={{ backgroundColor: '#3A384A' }}
+                                        onPress={() => { setSelectedLoan(loan); getPays(loan.id) }}
+                                        leftContent={(reset) => (
+                                            <Button
+                                                title="Info"
+                                                onPress={() => {
+                                                    navigation.navigate('LoanInfo', { loan, edit: false, admin: true });
+                                                    reset();
+                                                }}
+                                                icon={{ name: 'info', color: 'white' }}
+                                                buttonStyle={{ minHeight: '100%' }}
+                                            />
+                                        )}
+                                        rightContent={(reset) => (
+                                            <Button
+                                                onPress={() => {
+                                                    navigation.navigate('LoanInfo', { loan, edit: true, admin: true });
+                                                    reset();
+                                                }}
+                                                icon={{ name: 'edit', color: 'white' }}
+                                                buttonStyle={{ minHeight: '100%', backgroundColor: 'orange' }}
+                                            />
+                                        )}
+                                    >
+                                        <ListItem.Content>
+                                            <View style={{ flex: 1 }}>
+                                                <View style={styles.titleView}>
+                                                    <View style={{ flex: 1 }}><Text style={{ color: 'white', size: 20 }}>{loan.descripcion}</Text></View>
+                                                    <View style={{ flex: 1 }}><Text style={{ color: colors }}>$ {formatMoney(loan.total)}</Text></View>
+                                                </View>
+                                                <View style={styles.subtitleView}>
+                                                    <View style={{ flex: 1 }}><Text style={styles.ratingText}>{loan.transaccion[0].origen.nombre}</Text></View>
+                                                    <View style={{ flex: 1 }}>
+                                                        <LinearProgress
+                                                            animation={false}
+                                                            style={{ marginVertical: 10, width: '50%' }}
+                                                            value={progress}
+                                                            variant="determinate"
+                                                            color='#0D6EFD'
+                                                        />
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </ListItem.Content>
+                                    </ListItem.Swipeable>
+                                )
+                            })}
+                        </ScrollView>
+                    </TabView.Item>
+                </TabView>
+
+                <View style={{ height: 'auto' }}>
+                    <FAB
                         visible={true}
                         icon={{ name: 'add', color: 'white' }}
                         placement="right"
@@ -255,34 +399,33 @@ export default function LoanList(props) {
                             })
                             }
                         </ScrollView>
-                        <View style={{ height: 100 }}>
+                        <View style={{ height: 'auto' }}>
                             <FAB
                                 visible={true}
-                                onPress={() => navigation.navigate('CreatePay', { loan: selectedLoan, admin: true, prestamo:selectedLoan })}
+                                onPress={() => navigation.navigate('CreatePay', { loan: selectedLoan, admin: true, prestamo: selectedLoan })}
                                 icon={{ name: 'add', color: 'white' }}
                                 placement="right"
                                 size="large"
                                 color='#0D6EFD'
                             />
                             <FAB
-                            visible={selectedLoan ? true : false}
-                            icon={{ name: 'cancel', type:'material-community', color: 'white' }}
-                            placement="left"
-                            size="large"
-                            color='orange'
-                            onPress={() => setSelectedLoan(null)}
-                        />
+                                visible={selectedLoan ? true : false}
+                                icon={{ name: 'cancel', type: 'material-community', color: 'white' }}
+                                placement="left"
+                                size="large"
+                                color='orange'
+                                onPress={() => setSelectedLoan(null)}
+                            />
                         </View>
                     </>}
             </View>
         </View>
-    )
+    </>)
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: '#3A384A'
     },
     text: {

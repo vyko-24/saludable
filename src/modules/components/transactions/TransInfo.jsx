@@ -447,11 +447,7 @@ export default function TransInfo(props) {
             {params.edit && <Avatar.Accessory size={30} onPress={changeAvatar} />}
           </Avatar>
         ) : (
-          <Avatar
-            source={{ uri: "https://cdn-icons-png.flaticon.com/512/987/987815.png" }}
-            resizeMode='contain'
-            containerStyle={styles.avatar}
-          />
+          <Text style={{color:'white', fontSize:10}}>Sin comprobante</Text>
         )}
       </View>
 
@@ -473,11 +469,11 @@ export default function TransInfo(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#3A384A'
   },
   row: {
     flexDirection: 'row',
+    paddingHorizontal: 20,
     justifyContent: 'space-between',
     marginBottom: 16,
   },

@@ -278,14 +278,14 @@ export default function LoanInfo(props) {
                 </>
             ) : (
                 <View style={styles.row}>
-                    <Text style={styles.title}>{formik.values.tipo === 'true' ? 'Préstamo Solicitado' : 'Préstamo Dado'}</Text>
+                    <Text style={styles.title}>{formik.values.tipo ? 'Préstamo Solicitado' : 'Préstamo Dado'}</Text>
                 </View>
             )}
 
             {params.edit ? (
                 <Input
                     style={styles.description}
-                    defaultValue={formik.values.monto.toString()}
+                    defaultValue={formik.values.monto ? formik.values.monto.toString() : ''}
                     onChangeText={formik.handleChange('monto')}
                     onBlur={formik.handleBlur('monto')}
                     disabledInputStyle={styles.description}
@@ -302,7 +302,7 @@ export default function LoanInfo(props) {
             {params.edit ? (
                 <Input
                     style={styles.description}
-                    defaultValue={formik.values.interes.toString()}
+                    defaultValue={formik.values.interes ? formik.values.interes.toString() : ''}
                     onChangeText={formik.handleChange('interes')}
                     onBlur={formik.handleBlur('interes')}
                     disabledInputStyle={styles.description}
@@ -337,7 +337,7 @@ export default function LoanInfo(props) {
                 formik.values.unico ? null :
                     <Input
                         style={styles.description}
-                        defaultValue={formik.values.periodo.toString()}
+                        defaultValue={formik.values.periodo ? formik.values.periodo.toString() : ''}
                         onChangeText={formik.handleChange('periodo')}
                         onBlur={formik.handleBlur('periodo')}
                         disabledInputStyle={styles.description}
