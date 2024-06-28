@@ -36,6 +36,7 @@ export default function Login() {
                     deviceModel: Device.modelName,
                     deviceOS: Device.osName,
                     deviceOSVersion: Device.osVersion,
+                    userAgent: Device.userAgent,
                 };
                 const payload = {
                     ...signin,

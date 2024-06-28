@@ -14,6 +14,7 @@ export default function UserInfo(props) {
   const { navigation } = props;
   const [permisos, setPermisos] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [devices, setDevices] = useState(params.user.devices);
 
   const [checked, setChecked] = useState({});
 
@@ -49,7 +50,7 @@ export default function UserInfo(props) {
       setTimeout(() => {
         setMessage(false);
       }, 2000);
-    }finally{
+    } finally {
       setVisible(false);
     }
   }
@@ -66,7 +67,7 @@ export default function UserInfo(props) {
       id: params.user.id,
       username: params.user.username,
       email: params.user.email,
-      password:params.user.password,
+      password: params.user.password,
     },
     validationSchema: yup.object({
       username: yup.string().required('Campo requerido'),
@@ -78,7 +79,7 @@ export default function UserInfo(props) {
         ...values,
         username: values.username,
         email: values.email,
-        password:params.user.password,
+        password: params.user.password,
         roles: roles
       }
       console.log(payload);
@@ -101,51 +102,65 @@ export default function UserInfo(props) {
         setTimeout(() => {
           setMessage(false);
         }, 2000);
-      }finally{
+      } finally {
         setVisible(false);
       }
     }
   });
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1; // Los meses comienzan desde 0
+        const year = date.getFullYear();
+        const time = date.toLocaleTimeString();
+        const formattedTime = time.split(':').slice(0, 2).join(':');
+        // Agrega un cero inicial si el día o el mes tienen un solo dígito
+        const formattedDay = day < 10 ? `0${day}` : day;
+        const formattedMonth = month < 10 ? `0${month}` : month;
+
+        return `${formattedDay}-${formattedMonth}-${year} ${formattedTime}`;
+    };
+
   return (
     <ScrollView style={styles.container}>
-    <Loading
+      <Loading
         visible={visible}
         title='Cargando...'
-    />
-    <Message visible={message} title='Error. Inténtelo más tarde'/>
-        {!params.edit ? (
-      <View style={styles.row}>
-        <Text style={styles.title}>Nombre de usuario:</Text>
+      />
+      <Message visible={message} title='Error. Inténtelo más tarde' />
+      {!params.edit ? (
+        <View style={styles.row}>
+          <Text style={styles.title}>Nombre de usuario:</Text>
           <Text style={styles.description}>{params.user.username}</Text>
-          </View>
-        ) : (
-          <Input
-            style={styles.description}
-            value={formik.values.username}
-            onChangeText={formik.handleChange('username')}
-            onBlur={formik.handleBlur('username')}
-            disabled={!params.edit}
-            disabledInputStyle={styles.description}
-            label="Nombre de usuario"
-          />
-        )}
-        {!params.edit ? (
-      <View style={styles.row}>
-        <Text style={styles.title}>Correo electrónico:</Text>
+        </View>
+      ) : (
+        <Input
+          style={styles.description}
+          value={formik.values.username}
+          onChangeText={formik.handleChange('username')}
+          onBlur={formik.handleBlur('username')}
+          disabled={!params.edit}
+          disabledInputStyle={styles.description}
+          label="Nombre de usuario"
+        />
+      )}
+      {!params.edit ? (
+        <View style={styles.row}>
+          <Text style={styles.title}>Correo electrónico:</Text>
           <Text style={styles.description}>{params.user.email}</Text>
-          </View>
-        ) : (
-          <Input
-            style={styles.description}
-            value={formik.values.email}
-            onChangeText={formik.handleChange('email')}
-            onBlur={formik.handleBlur('email')}
-            disabled={!params.edit}
-            label="Correo electrónico"
-            disabledInputStyle={styles.description}
-          />
-        )}
+        </View>
+      ) : (
+        <Input
+          style={styles.description}
+          value={formik.values.email}
+          onChangeText={formik.handleChange('email')}
+          onBlur={formik.handleBlur('email')}
+          disabled={!params.edit}
+          label="Correo electrónico"
+          disabledInputStyle={styles.description}
+        />
+      )}
       <View style={{ marginBottom: 15 }}>
         <Text style={styles.title}>Permisos:</Text>
         {params.edit ? (
@@ -157,7 +172,7 @@ export default function UserInfo(props) {
                 center
                 checked={checked[permiso.id]}
                 onPress={() => toggleCheckbox(permiso.id)}
-                containerStyle={{ backgroundColor: '#3A384A'}}
+                containerStyle={{ backgroundColor: '#3A384A' }}
               />
               <ListItem.Content>
                 <ListItem.Title style={styles.description}>{permiso.name}</ListItem.Title>
@@ -171,7 +186,7 @@ export default function UserInfo(props) {
             ))
         )}
       </View>
-      {params.edit &&(<View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 30  }}>
+      {params.edit && (<View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 30 }}>
         <Button
           title='Actualizar'
           containerStyle={styles.btnContainer}
@@ -180,6 +195,23 @@ export default function UserInfo(props) {
           onPress={formik.handleSubmit}
         />
       </View>)}
+      {!params.edit ? (
+        <Text style={styles.title}>Dispositivos vinculados:</Text>
+      ):null}
+      {!params.edit ? (
+          devices.length > 0 ?(
+          devices.map((device, index) => (
+            <ListItem key={device.id} bottomDivider containerStyle={{ backgroundColor: '#3A384A' }}>
+              <ListItem.Content>
+                <ListItem.Title style={styles.description}>{device.deviceName ? device.deviceName : device.deviceModel}</ListItem.Title>
+                <ListItem.Subtitle style={styles.description}>{formatDate(device.loginTime)}</ListItem.Subtitle>
+              </ListItem.Content>
+            </ListItem>)
+            
+          )): (
+            <Text style={styles.description}>- Sin dispositivos vinculados</Text>
+            )
+        ): null}
     </ScrollView>
   )
 }
@@ -206,12 +238,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   btnStyle: {
-      backgroundColor: '#0D6EFD',
-      color: 'white',
+    backgroundColor: '#0D6EFD',
+    color: 'white',
 
   },
   btnContainer: {
-      width: '80%',
+    width: '80%',
 
   }
 })
