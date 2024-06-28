@@ -6,6 +6,7 @@ import AxiosClient from '../../config/http-gateway/http-client'
 import AuthContext from '../../config/context/auth-context'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Message from '../../kernel/Message'
+import * as Device from 'expo-device';
 
 
 export default function Login() {
@@ -28,11 +29,25 @@ export default function Login() {
             setShowMessage("");
             setVisible(true);
             try {
+                const deviceInfo = {
+                    deviceId: Device.deviceId,
+                    deviceName: Device.deviceName,
+                    deviceType: Device.deviceType,
+                    deviceModel: Device.modelName,
+                    deviceOS: Device.osName,
+                    deviceOSVersion: Device.osVersion,
+                };
+                const payload = {
+                    ...signin,
+                    device: deviceInfo,
+                };
+
                 const response = await AxiosClient({
                     url:"/auth/signin",
                     method:"POST",
-                    data: signin
+                    data: payload
                 })
+                console.log("response",payload);
                 const userData = response.data;
                 await AsyncStorage.setItem("role", JSON.stringify(userData.roles));
                 await AsyncStorage.setItem("user",JSON.stringify(userData));
