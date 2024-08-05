@@ -182,7 +182,8 @@ export default function CreateLoan(props) {
         },
         validationSchema: yup.object({
           nombre: yup.string().required('El nombre es requerido'),
-          monto: yup.number().required('El monto es requerido'),
+          monto: yup.number().required('El monto es requerido').min(1, 'El monto debe ser mayor a 0'),
+          interes: yup.number().min(0, 'El interés debe ser mayor o igual a 0').optional(),
           comprobante: yup.string().required('El comprobante es requerido'),
         }),
         onSubmit: async (values) => {

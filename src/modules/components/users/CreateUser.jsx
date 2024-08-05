@@ -60,7 +60,7 @@ export default function CreateUser(props) {
     validationSchema: yup.object({
       username: yup.string().required('El nombre de usuario es requerido'),
       email: yup.string().email('El correo electrónico no es válido').required('El correo electrónico es requerido'),
-      password: yup.string().required('La contraseña es requerida'),
+      password: yup.string().required('La contraseña es requerida').max(50, "Solo se permiten hasta 50 caractéres").min(8, "Mínimo 8 caractéres"),
       confirm: yup.string().required('La confirmación de la contraseña es requerida').oneOf([yup.ref('password'), null], 'Las contraseñas no coinciden'),
     }),
     onSubmit: async (values) => {

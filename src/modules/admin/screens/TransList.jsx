@@ -15,7 +15,7 @@ export default function TransList(props) {
     const [visible, setVisible] = useState(false);
 
     const getTransactions = async () => {
-        if (!transactions)
+        if (transactions.length === 0) 
         setVisible(true);
         try {
             const response = await AxiosClient({

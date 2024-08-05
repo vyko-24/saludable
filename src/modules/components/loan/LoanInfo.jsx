@@ -176,7 +176,8 @@ export default function LoanInfo(props) {
             reembolzado: params.loan.reembolzado,
         },
         validationSchema: yup.object({
-            monto: yup.number().required('El monto es requerido'),
+            monto: yup.number().required('El monto es requerido').min(1, 'El monto debe ser mayor a 0'),
+            interes: yup.number().min(0, 'El interés debe ser mayor o igual a 0').optional(),
         }),
         onSubmit: async (values) => {
             setVisible(true);

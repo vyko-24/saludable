@@ -217,7 +217,7 @@ export default function TransInfo(props) {
       categoria: yup.string().required('La categoría es requerida'),
       origen: yup.string().required('La cuenta de origen es requerida'),
       destino: yup.string(),
-      monto: yup.number().required('El monto es requerido'),
+      monto: yup.number().required('El monto es requerido').min(1, 'El monto debe ser mayor a 0'),
       comprobante: yup.string(),
       usuario: yup.string().required('El usuario es requerido'),
     }),
