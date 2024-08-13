@@ -25,7 +25,8 @@
         "NSCameraUsageDescription": "Se necesita acceso a la cámara para tomar fotos",
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
-      }
+      },
+      "bundleIdentifier": "com.vko37.saludable"
     },
     "android": {
       "adaptiveIcon": {
@@ -39,7 +40,8 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.ACCESS_MEDIA_LOCATION"
-      ]
+      ],
+      "package": "com.vko37.saludable"
     },
     "web": {
       "favicon": "./assets/favicon.png"
